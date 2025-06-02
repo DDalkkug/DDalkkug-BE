@@ -60,27 +60,18 @@ jobs:
     needs: build-docker-image
     runs-on: self-hosted
     steps:
+      # 1. 최신 이미지를 풀받습니다
       - name: docker pull
         run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/drumtong_cicd_action
+      
+      # 2. 기존 'drumtong' 컨테이너가 있으면 강제로 삭제(없으면 무시)
+      - name: Remove existing container if any
+        run: docker rm -f drumtong 2>/dev/null || true
 
-      # 2-1. drumtong 컨테이너가 실행 중이면 중지
-      - name: Stop existing container if running
-        run: |
-          if [ "$(docker ps -q -f name=drumtong)" ]; then
-            docker stop drumtong
-          fi
-
-      # 2-2. drumtong 컨테이너가 존재하면 삭제
-      - name: Remove existing container if exists
-        run: |
-          if [ "$(docker ps -aq -f name=drumtong)" ]; then
-            docker rm drumtong
-          fi
-
-      # 3. 최신 이미지를 컨테이너화하여 실행시킵니다
+      # 3. 최신 이미지를 컨테이너화하여 실행
       - name: docker run new container
         run: docker run --name drumtong --rm -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/drumtong_cicd_action
 
+      # 4. 미사용 이미지를 정리합니다
       - name: delete old docker image
         run: docker system prune -f
-
