@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
+import java.time.format.TextStyle;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -124,6 +126,82 @@ public class CalendarEntryService {
         return entries.stream()
                 .map(this::getEntryWithDrinks)
                 .collect(Collectors.toList());
+    }
+
+    // 최근 5개월 지출 데이터 조회 메소드
+    public List<MonthlyExpenseDto> getRecentMonthsExpense(Long userId, int year, int month) {
+        List<MonthlyExpenseDto> result = new ArrayList<>();
+
+        // 요청받은 연월로부터 5개월치 데이터 (요청 월 포함 이전 4개월)
+        for (int i = 4; i >= 0; i--) {
+            // i개월 이전 날짜 계산
+            YearMonth targetYearMonth = YearMonth.of(year, month).minusMonths(i);
+            int targetYear = targetYearMonth.getYear();
+            int targetMonth = targetYearMonth.getMonthValue();
+
+            // 해당 월 지출 금액 조회
+            int monthlyTotal = getMonthlyTotalPrice(userId, targetYear, targetMonth);
+
+            MonthlyExpenseDto dto = MonthlyExpenseDto.builder()
+                    .year(targetYear)
+                    .month(targetMonth)
+                    .totalPrice(monthlyTotal)
+                    .build();
+
+            result.add(dto);
+        }
+
+        return result;
+    }
+
+    // 이번주 월~금 지출 조회
+    public Map<String, Object> getCurrentWeekdaysExpense(Long userId) {
+        LocalDate today = LocalDate.now();
+
+        // 이번 주의 월요일 구하기
+        LocalDate monday = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+
+        // 이번 주의 금요일 구하기
+        LocalDate friday = monday.plusDays(4);
+
+
+        // 오늘이 금요일보다 이전이면 이번 주의 금요일로 설정
+        if (today.isBefore(friday)) {
+            friday = today;
+        }
+
+        // 월~금 사이의 지출 조회
+        List<CalendarEntry> entries = calendarEntryRepository.findByUserIdAndDrinkingDateBetween(
+                userId, monday, friday);
+
+        // 총 금액 계산
+        int totalPrice = entries.stream()
+                .mapToInt(entry -> entry.getTotalPrice() != null ? entry.getTotalPrice() : 0)
+                .sum();
+
+        // 일자별 지출 집계
+        Map<LocalDate, Integer> dailyExpenses = entries.stream()
+                .collect(Collectors.groupingBy(
+                        CalendarEntry::getDrinkingDate,
+                        Collectors.summingInt(entry -> entry.getTotalPrice() != null ? entry.getTotalPrice() : 0)
+                ));
+
+        // 결과 생성
+        Map<String, Object> result = new LinkedHashMap<>();  // 순서 보존을 위해 LinkedHashMap 사용
+        result.put("startDate", monday.toString());
+        result.put("endDate", friday.toString());
+        result.put("totalPrice", totalPrice);
+
+        // 각 요일별 지출 추가
+        Map<String, Integer> weekdayExpenses = new LinkedHashMap<>();
+        for (LocalDate date = monday; !date.isAfter(friday); date = date.plusDays(1)) {
+            String dayOfWeek = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.KOREAN);
+            int amount = dailyExpenses.getOrDefault(date, 0);
+            weekdayExpenses.put(dayOfWeek, amount);
+        }
+        result.put("dailyExpenses", weekdayExpenses);
+
+        return result;
     }
 
     // getMonthlyCalendarSummary 메소드 내부의 코드 수정
