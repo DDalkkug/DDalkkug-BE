@@ -45,7 +45,8 @@ public class SecurityConfig {
                     CorsConfiguration config = new CorsConfiguration();
                     config.setAllowedOrigins(Arrays.asList(
                             "https://api.ddalkkug.kro.kr",
-                            "http://localhost:5436"
+                            "http://localhost:5436",
+                            "http://localhost:5173"
                     ));
                     config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH","DELETE", "OPTIONS"));
                     config.setAllowCredentials(true);

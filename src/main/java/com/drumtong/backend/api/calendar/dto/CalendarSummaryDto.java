@@ -15,6 +15,6 @@ import java.util.Map;
 public class CalendarSummaryDto {
     private LocalDate date;
     private int totalEntries;
-    private int totalPrice; // 추가: 해당 날짜의 총 가격
-    private Map<String, Integer> drinkCounts; // Map of drink type to count
+    private int totalPrice;
+    private Map<String, Integer> drinkCounts;
 }

@@ -27,4 +27,8 @@ public class Member extends BaseTimeEntity {
         this.password=password;
     }
 
+    // 금액 추가 메서드
+    public void addPaid(int amount){
+        this.totalPaid += amount;
+    }
 }
