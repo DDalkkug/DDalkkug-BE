@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -17,7 +18,7 @@ public class CalendarEntryResponseDto {
     private Integer totalPrice;
     private String photoUrl;
     private LocalDateTime createdAt;
-
+    private List<DrinkDto> drinks; // Added drinks list
 
     public CalendarEntryResponseDto(CalendarEntry entry) {
         this.id = entry.getId();
