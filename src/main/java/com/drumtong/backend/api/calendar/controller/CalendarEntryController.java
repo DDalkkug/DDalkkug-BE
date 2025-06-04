@@ -3,22 +3,35 @@ package com.drumtong.backend.api.calendar.controller;
 import com.drumtong.backend.api.calendar.dto.CalendarEntryRequestDto;
 import com.drumtong.backend.api.calendar.dto.CalendarEntryResponseDto;
 import com.drumtong.backend.api.calendar.service.CalendarEntryService;
+import com.drumtong.backend.api.calendar.service.ImageUploadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/calendar-entries")
+@RequestMapping("/api/v1/calendar-entries")
 @RequiredArgsConstructor
 public class CalendarEntryController {
     private final CalendarEntryService calendarEntryService;
+    private final ImageUploadService imageUploadService;
 
-    @PostMapping
-    public ResponseEntity<CalendarEntryResponseDto> create(@RequestBody CalendarEntryRequestDto dto) {
-        return ResponseEntity.ok(calendarEntryService.createEntry(dto));
+    @PostMapping(consumes = "multipart/form-data")
+    public ResponseEntity<String> createEntry(
+            @ModelAttribute CalendarEntryRequestDto requestDto,
+            @RequestPart(value = "image", required = false) MultipartFile image) {
+
+        String imageUrl = null;
+        if (image != null && !image.isEmpty()) {
+            imageUrl = imageUploadService.upload(image);
+        }
+
+        calendarEntryService.createEntry(requestDto, imageUrl);
+        return ResponseEntity.ok("등록 완료");
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<CalendarEntryResponseDto> get(@PathVariable Long id) {
