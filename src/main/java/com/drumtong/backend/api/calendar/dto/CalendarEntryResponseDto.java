@@ -29,4 +29,5 @@ public class CalendarEntryResponseDto {
         this.photoUrl = entry.getPhotoUrl();
         this.createdAt = entry.getCreatedAt();
     }
+
 }

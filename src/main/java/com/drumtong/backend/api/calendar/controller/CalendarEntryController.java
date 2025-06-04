@@ -16,7 +16,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/calendar-entries")
@@ -62,6 +64,43 @@ public class CalendarEntryController {
         // 권한 검증이 필요할 수 있습니다
         calendarEntryService.deleteEntry(id);
         return ApiResponse.success_only(SuccessStatus.SEND_HEALTH_SUCCESS);
+    }
+
+    @GetMapping("/month-expense")
+    @Operation(summary = "한 달 동안 사용한 총 금액 조회")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getMonthlyExpense(
+            @AuthenticationPrincipal SecurityMember securityMember,
+            @RequestParam int year,
+            @RequestParam int month) {
+
+        int totalPrice = calendarEntryService.getMonthlyTotalPrice(securityMember.getId(), year, month);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("year", year);
+        response.put("month", month);
+        response.put("totalPrice", totalPrice);
+
+        return ApiResponse.success(SuccessStatus.SEND_HEALTH_SUCCESS, response);
+    }
+
+    @GetMapping("/week-expense")
+    @Operation(summary = "특정 주의 사용한 총 금액 조회")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getWeeklyExpense(
+            @AuthenticationPrincipal SecurityMember securityMember,
+            @RequestParam int year,
+            @RequestParam int month,
+            @RequestParam int weekOfMonth) {
+
+        int totalPrice = calendarEntryService.getWeeklyTotalPrice(
+                securityMember.getId(), year, month, weekOfMonth);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("year", year);
+        response.put("month", month);
+        response.put("week", weekOfMonth);
+        response.put("totalPrice", totalPrice);
+
+        return ApiResponse.success(SuccessStatus.SEND_HEALTH_SUCCESS, response);
     }
 
     @GetMapping
