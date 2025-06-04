@@ -14,6 +14,12 @@ public enum SuccessStatus {
      */
     SEND_REGISTER_SUCCESS(HttpStatus.OK,"회원가입 성공"),
     SEND_HEALTH_SUCCESS(HttpStatus.OK,"서버 상태 OK"),
+    SEND_EMAIL_VERIFICATION_CODE_SUCCESS(HttpStatus.OK,"이메일 인증코드 발송 성공"),
+    SEND_EMAIL_VERIFICATION_SUCCESS(HttpStatus.OK,"이메일 코드 인증 성공"),
+    SEND_LOGIN_SUCCESS(HttpStatus.OK, "로그인 성공"),
+    SEND_UPDATE_USER_PASSWORD(HttpStatus.OK, "비밀번호 변경 성공"),
+    SEND_PASSWORD_RESET_CODE_SUCCESS(HttpStatus.OK,"비밀번호 초기화 코드 전송 성공"),
+    GET_USER_INFO_SUCCESS(HttpStatus.OK, "사용자 정보 조회 성공"),
 
     /**
      * 201
