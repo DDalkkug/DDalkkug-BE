@@ -13,5 +13,6 @@ public class SecurityMember{
     private Long id;
     private String email;
     private String password;
+    private int totalpaid;
 
 }

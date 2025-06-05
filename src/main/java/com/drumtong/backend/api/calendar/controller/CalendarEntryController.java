@@ -6,7 +6,11 @@ import com.drumtong.backend.api.calendar.dto.CalendarSummaryDto;
 import com.drumtong.backend.api.calendar.dto.MonthlyExpenseDto;
 import com.drumtong.backend.api.calendar.service.CalendarEntryService;
 import com.drumtong.backend.api.calendar.service.ImageUploadService;
+import com.drumtong.backend.api.member.entity.Member;
+import com.drumtong.backend.api.member.repository.MemberRepository;
+import com.drumtong.backend.common.exception.NotFoundException;
 import com.drumtong.backend.common.response.ApiResponse;
+import com.drumtong.backend.common.response.ErrorStatus;
 import com.drumtong.backend.common.response.SuccessStatus;
 import com.drumtong.backend.common.config.security.SecurityMember;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,6 +33,7 @@ import java.util.Map;
 public class CalendarEntryController {
     private final CalendarEntryService calendarEntryService;
     private final ImageUploadService imageUploadService;
+    private final MemberRepository memberRepository;
 
     @PostMapping(consumes = "multipart/form-data")
     @Operation(summary = "게시글 등록")
@@ -79,11 +84,14 @@ public class CalendarEntryController {
         int totalPrice = calendarEntryService.getWeeklyTotalPrice(
                 securityMember.getId(), year, month, weekOfMonth);
 
+        Member member = memberRepository.findById(securityMember.getId())
+                .orElseThrow(() -> new NotFoundException(ErrorStatus.USER_NOT_FOUND_EXCEPTION.getMessage()));
         Map<String, Object> response = new HashMap<>();
         response.put("year", year);
         response.put("month", month);
         response.put("week", weekOfMonth);
-        response.put("totalPrice", totalPrice);
+        response.put("weekPrice", totalPrice);
+        response.put("totalPaid", member.getTotalPaid());
 
         return ApiResponse.success(SuccessStatus.SEND_HEALTH_SUCCESS, response);
     }
