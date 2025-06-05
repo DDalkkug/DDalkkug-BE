@@ -108,7 +108,7 @@ public class MemberService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundException(ErrorStatus.USER_NOT_FOUND_EXCEPTION.getMessage()));
 
-        return new UserInfoResponseDTO(member.getId(), member.getNickname(), member.getEmail());
+        return new UserInfoResponseDTO(member.getId(), member.getNickname(), member.getEmail(), member.getTotalPaid());
     }
 
 }

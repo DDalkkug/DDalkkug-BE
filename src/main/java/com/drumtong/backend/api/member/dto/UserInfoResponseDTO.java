@@ -10,4 +10,5 @@ public class UserInfoResponseDTO {
     private long id;
     private String nickname;
     private String email;
+    private int totalPaid;
 }

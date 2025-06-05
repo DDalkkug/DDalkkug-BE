@@ -83,7 +83,8 @@ public class CalendarEntryController {
         response.put("year", year);
         response.put("month", month);
         response.put("week", weekOfMonth);
-        response.put("totalPrice", totalPrice);
+        response.put("weekPrice", totalPrice);
+        response.put("totalPaid", securityMember.getTotalpaid());
 
         return ApiResponse.success(SuccessStatus.SEND_HEALTH_SUCCESS, response);
     }
