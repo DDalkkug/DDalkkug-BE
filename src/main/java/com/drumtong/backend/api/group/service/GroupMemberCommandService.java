@@ -4,6 +4,8 @@ package com.drumtong.backend.api.group.service;
 import com.drumtong.backend.api.group.dto.GroupMemberCommandDto;
 import com.drumtong.backend.api.group.entity.GroupMember;
 import com.drumtong.backend.api.group.repository.GroupMemberRepository;
+import com.drumtong.backend.common.exception.NotFoundException;
+import com.drumtong.backend.common.response.ErrorStatus;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,7 +29,7 @@ public class GroupMemberCommandService {
 
     public void updateGroupMember(Long id, GroupMemberCommandDto dto) {
         GroupMember groupMember = groupMemberRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("그룹 멤버를 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundException(ErrorStatus.GROUP_NOT_FOUND_EXCEPTION.getMessage()));
         groupMember.update(dto.getCalendarId(), dto.getUserId(), dto.getPaidAmount());
     }
 

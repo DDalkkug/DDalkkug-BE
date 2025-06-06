@@ -21,6 +21,13 @@ public enum SuccessStatus {
     SEND_PASSWORD_RESET_CODE_SUCCESS(HttpStatus.OK,"비밀번호 초기화 코드 전송 성공"),
     GET_USER_INFO_SUCCESS(HttpStatus.OK, "사용자 정보 조회 성공"),
 
+    SEND_GROUP_CREATE_SUCCESS(HttpStatus.OK, "그룹 생성 성공"),
+    SEND_GROUP_UPDATE_SUCCESS(HttpStatus.OK, "그룹 수정 성공"),
+    GET_GROUP_INFO_SUCCESS(HttpStatus.OK, "그룹 조회 성공"),
+    GET_GROUP_INFO_LIST_SUCCESS(HttpStatus.OK, "그룹 목록 조회 성공"),
+    SEND_GROUP_DELETE_SUCCESS(HttpStatus.OK, "그룹 삭제 성공"),
+
+
     /**
      * 201
      */

@@ -22,7 +22,7 @@ public class GroupMember {
 
     private Long calendarId;
     private Long userId;
-    private Integer paidAmount;
+    private int paidAmount;
 
 
     public void update(Long calendarId, Long userId, Integer paidAmount) {
