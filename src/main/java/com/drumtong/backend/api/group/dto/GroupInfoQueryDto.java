@@ -5,7 +5,8 @@ import lombok.Data;
 @Data
 public class GroupInfoQueryDto {
     private Long id;
-    private Long calendarId;
-    private Long userId;
-    private Integer paidAmount;
+    private Long leaderId;
+    private String name;
+    private String description;
+    private Integer totalPaid;
 }
