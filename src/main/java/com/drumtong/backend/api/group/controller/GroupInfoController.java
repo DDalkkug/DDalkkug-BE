@@ -1,9 +1,9 @@
 package com.drumtong.backend.api.group.controller;
 
-import com.drumtong.backend.api.group.dto.GroupMemberCommandDto;
-import com.drumtong.backend.api.group.dto.GroupMemberQueryDto;
-import com.drumtong.backend.api.group.service.GroupMemberCommandService;
-import com.drumtong.backend.api.group.service.GroupMemberQueryService;
+import com.drumtong.backend.api.group.dto.GroupInfoCommandDto;
+import com.drumtong.backend.api.group.dto.GroupInfoQueryDto;
+import com.drumtong.backend.api.group.service.GroupInfoCommandService;
+import com.drumtong.backend.api.group.service.GroupInfoQueryService;
 import com.drumtong.backend.common.response.ApiResponse;
 import com.drumtong.backend.common.response.SuccessStatus;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,10 +24,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/group-members")
 @RequiredArgsConstructor
-public class GroupMemberController {
+public class GroupInfoController {
 
-    private final GroupMemberCommandService commandService;
-    private final GroupMemberQueryService queryService;
+    private final GroupInfoCommandService commandService;
+    private final GroupInfoQueryService queryService;
 
     /**
      * 그룹 생성
@@ -36,7 +36,7 @@ public class GroupMemberController {
      */
     @PostMapping
     @Operation(summary = "그룹 생성")
-    public ResponseEntity<ApiResponse<Long>> create(@RequestBody GroupMemberCommandDto dto) {
+    public ResponseEntity<ApiResponse<Long>> create(@RequestBody GroupInfoCommandDto dto) {
         Long id = commandService.createGroupMember(dto);
         return ApiResponse.success(SuccessStatus.SEND_GROUP_CREATE_SUCCESS, id);
     }
@@ -49,7 +49,7 @@ public class GroupMemberController {
      */
     @PutMapping("/{id}")
     @Operation(summary = "그룹 수정")
-    public ResponseEntity<ApiResponse<Void>> update(@PathVariable Long id, @RequestBody GroupMemberCommandDto dto) {
+    public ResponseEntity<ApiResponse<Void>> update(@PathVariable Long id, @RequestBody GroupInfoCommandDto dto) {
         commandService.updateGroupMember(id, dto);
         return ApiResponse.success_only(SuccessStatus.SEND_GROUP_UPDATE_SUCCESS);
     }
@@ -73,7 +73,7 @@ public class GroupMemberController {
      */
     @GetMapping("/{id}")
     @Operation(summary = "그룹 단건 조회")
-    public ResponseEntity<ApiResponse<GroupMemberQueryDto>> findById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<GroupInfoQueryDto>> findById(@PathVariable Long id) {
         return ApiResponse.success(SuccessStatus.GET_GROUP_INFO_SUCCESS, queryService.findById(id));
     }
 
@@ -83,7 +83,7 @@ public class GroupMemberController {
      */
     @GetMapping
     @Operation(summary = "그룹 전체 조회")
-    public ResponseEntity<ApiResponse<List<GroupMemberQueryDto>>> findAll() {
+    public ResponseEntity<ApiResponse<List<GroupInfoQueryDto>>> findAll() {
         return ApiResponse.success(SuccessStatus.GET_GROUP_INFO_LIST_SUCCESS, queryService.findAll());
     }
 }
