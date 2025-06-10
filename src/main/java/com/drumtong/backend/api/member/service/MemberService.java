@@ -36,7 +36,7 @@ public class MemberService {
 
         // 이메일 중복 검증
         if (memberRepository.findByEmail(memberRegisterRequestDTO.getEmail()).isPresent()) {
-            throw new BadRequestException(ErrorStatus.ALREADY_REGISTER_EMAIL_EXCEPTION.getMessage());
+            throw new BadRequestException(ErrorStatus.ALREADY_REGISTER_EMAIL_EXCPETION.getMessage());
         }
 
         // 이메일 인증 여부 체크
