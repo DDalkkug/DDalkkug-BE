@@ -36,7 +36,7 @@ public class EmailService {
 
         // 이메일 중복 등록 검증
         if (memberRepository.findByEmail(email).isPresent()) {
-            throw new BadRequestException(ErrorStatus.ALREADY_REGISTER_EMAIL_EXCEPTION.getMessage());
+            throw new BadRequestException(ErrorStatus.ALREADY_REGISTER_EMAIL_EXCPETION.getMessage());
         }
 
         //기존에 있는 Email 삭제
