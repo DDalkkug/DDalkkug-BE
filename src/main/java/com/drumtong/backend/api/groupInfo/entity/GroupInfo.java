@@ -1,4 +1,4 @@
-package com.drumtong.backend.api.group.entity;
+package com.drumtong.backend.api.groupInfo.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
