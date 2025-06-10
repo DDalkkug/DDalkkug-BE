@@ -13,14 +13,14 @@ public enum ErrorStatus {
      * 400 BAD_REQUEST
      */
     VALIDATION_REQUEST_MISSING_EXCEPTION(HttpStatus.BAD_REQUEST, "요청 값이 입력되지 않았습니다."),
-    ALREADY_REGISTER_EMAIL_EXCPETION(HttpStatus.BAD_REQUEST, "이미 가입된 이메일 입니다."),
-    ALREADY_REGISTER_NICKNAME_EXCPETION(HttpStatus.BAD_REQUEST, "이미 등록된 이메일 입니다."),
+    ALREADY_REGISTER_EMAIL_EXCEPTION(HttpStatus.BAD_REQUEST, "이미 가입된 이메일 입니다."),
+    ALREADY_REGISTER_NICKNAME_EXCEPTION(HttpStatus.BAD_REQUEST, "이미 등록된 이메일 입니다."),
     WRONG_EMAIL_VERIFICATION_CODE_EXCEPTION(HttpStatus.BAD_REQUEST,"이메일 인증코드가 올바르지 않습니다."),
     VALIDATION_EMAIL_FORMAT_EXCEPTION(HttpStatus.BAD_REQUEST,"올바른 이메일 형식이 아닙니다."),
     MISSING_EMAIL_VERIFICATION_EXCEPTION(HttpStatus.BAD_REQUEST,"이메일 인증을 진행해주세요."),
     WRONG_PASSWORD_EXCEPTION(HttpStatus.BAD_REQUEST,"아이디 또는 비밀번호가 일치하지 않습니다."),
     INVALID_PASSWORD_RESET_CODE_EXCEPTION(HttpStatus.BAD_REQUEST,"유효하지 않은 비밀번호 초기화 인증코드 입니다."),
-
+    GROUP_ALREADY_EXISTS_EXCEPTION(HttpStatus.BAD_REQUEST,"이미 존재하는 그룹입니다."),
     /**
      * 401 UNAUTHORIZED
      */
