@@ -3,21 +3,17 @@ package com.drumtong.backend.api.groupInfo.controller;
 import com.drumtong.backend.api.groupInfo.dto.GroupInfoDto;
 import com.drumtong.backend.api.groupInfo.service.GroupInfoCommandService;
 import com.drumtong.backend.api.groupInfo.service.GroupInfoQueryService;
+import com.drumtong.backend.common.config.security.SecurityMember;
 import com.drumtong.backend.common.response.ApiResponse;
 import com.drumtong.backend.common.response.SuccessStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "GroupInfo", description = "GroupInfo 관련 API 입니다.")
 @RestController
@@ -29,69 +25,70 @@ public class GroupInfoController {
     private final GroupInfoQueryService queryService;
 
     /**
-     * 그룹 정보 생성
-     * @param dto 그룹 정보 생성 정보
-     * @return 생성된 그룹의 ID
+     * 그룹 정보 생성 - 현재 로그인한 사용자 ID 자동 설정
      */
     @PostMapping
     @Operation(summary = "그룹 생성")
-    public ResponseEntity<ApiResponse<Long>> create(@RequestBody GroupInfoDto dto) {
+    public ResponseEntity<ApiResponse<Long>> create(
+            @AuthenticationPrincipal SecurityMember securityMember,
+            @RequestBody GroupInfoDto dto) {
+        // 현재 로그인한 사용자 ID를 leaderId로 자동 설정
+        dto.setLeaderId(securityMember.getId());
+
+        // totalPaid는 서비스에서 null일 경우 0으로 자동 설정됨
         Long id = commandService.createGroupInfo(dto);
         return ApiResponse.success(SuccessStatus.SEND_GROUP_CREATE_SUCCESS, id);
     }
 
     /**
-     * 그룹 수정 - groupId
-     *
-     * @param groupId 그룹 ID
-     * @param dto     수정할 그룹 정보
-     * @return 성공 여부
+     * 그룹 수정 - groupId (리더만 가능)
      */
     @PutMapping("/id/{groupId}")
-    @Operation(summary = "그룹 수정")
-    public ResponseEntity<ApiResponse<Void>> update(@RequestBody GroupInfoDto dto, @PathVariable long groupId) {
+    @Operation(summary = "그룹 수정 (리더만 가능)")
+    public ResponseEntity<ApiResponse<Void>> update(
+            @AuthenticationPrincipal SecurityMember securityMember,
+            @RequestBody GroupInfoDto dto,
+            @PathVariable long groupId) {
         queryService.findByGroupId(groupId);
-        commandService.updateGroupInfo(groupId, dto);
+        commandService.updateGroupInfo(groupId, dto, securityMember.getId());
         return ApiResponse.success_only(SuccessStatus.SEND_GROUP_UPDATE_SUCCESS);
     }
 
     /**
-     * 그룹 수정 - 이름
-     *
-     * @param groupName 그룹 이름
-     * @param dto       수정할 그룹 정보
-     * @return 성공 여부
+     * 그룹 수정 - 이름 (리더만 가능)
      */
-
     @PutMapping("/name/{groupName}")
-    @Operation(summary = "그룹 수정 - 이름")
-    public ResponseEntity<ApiResponse<Void>> updateByName(@RequestBody GroupInfoDto dto, @PathVariable String groupName) {
+    @Operation(summary = "그룹 수정 - 이름 (리더만 가능)")
+    public ResponseEntity<ApiResponse<Void>> updateByName(
+            @AuthenticationPrincipal SecurityMember securityMember,
+            @RequestBody GroupInfoDto dto,
+            @PathVariable String groupName) {
         queryService.findByName(groupName);
-        commandService.updateGroupInfo(groupName, dto);
+        commandService.updateGroupInfo(groupName, dto, securityMember.getId());
         return ApiResponse.success_only(SuccessStatus.SEND_GROUP_UPDATE_SUCCESS);
     }
 
     /**
-     * 그룹 삭제 - 이름
-     * @param name 삭제하고자 하는 그룹 이름
-     * @return 성공 여부
+     * 그룹 삭제 - 이름 (리더만 가능)
      */
     @DeleteMapping("/name/{name}")
-    @Operation(summary = "그룹 삭제")
-    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable String name) {
-        commandService.deleteGroupInfoByName(name);
+    @Operation(summary = "그룹 삭제 (리더만 가능)")
+    public ResponseEntity<ApiResponse<Void>> delete(
+            @AuthenticationPrincipal SecurityMember securityMember,
+            @PathVariable String name) {
+        commandService.deleteGroupInfoByName(name, securityMember.getId());
         return ApiResponse.success_only(SuccessStatus.SEND_GROUP_DELETE_SUCCESS);
     }
+
     /**
-     * 그룹 삭제 - ID
-     * @param groupId 삭제하고자 하는 그룹 ID
-     * @return 성공 여부
+     * 그룹 삭제 - ID (리더만 가능)
      */
-    
     @DeleteMapping("/id/{groupId}")
-    @Operation(summary = "그룹 삭제 - ID")
-    public ResponseEntity<ApiResponse<Void>> deleteById(@PathVariable Long groupId) {
-        commandService.deleteGroupInfoById(groupId);
+    @Operation(summary = "그룹 삭제 - ID (리더만 가능)")
+    public ResponseEntity<ApiResponse<Void>> deleteById(
+            @AuthenticationPrincipal SecurityMember securityMember,
+            @PathVariable Long groupId) {
+        commandService.deleteGroupInfoById(groupId, securityMember.getId());
         return ApiResponse.success_only(SuccessStatus.SEND_GROUP_DELETE_SUCCESS);
     }
 
