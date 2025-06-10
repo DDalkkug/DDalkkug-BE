@@ -46,6 +46,11 @@ public class MemberService {
             throw new BadRequestException(ErrorStatus.MISSING_EMAIL_VERIFICATION_EXCEPTION.getMessage());
         }
 
+        // 닉네임 중복 체크
+        if (memberRepository.findByNickname(memberRegisterRequestDTO.getNickname()).isPresent()) {
+            throw new BadRequestException(ErrorStatus.ALREADY_REGISTER_NICKNAME_EXCPETION.getMessage());
+        }
+
         // Member 엔티티 생성
         Member member = Member.builder()
                 .email(memberRegisterRequestDTO.getEmail())
