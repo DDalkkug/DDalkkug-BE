@@ -48,8 +48,8 @@ public class GroupInfoController {
     public ResponseEntity<ApiResponse<Void>> update(
             @AuthenticationPrincipal SecurityMember securityMember,
             @RequestBody GroupInfoDto dto,
-            @PathVariable long groupId) {
-        queryService.findByGroupId(groupId);
+        @PathVariable long groupId) {
+            queryService.findByGroupId(groupId);
         commandService.updateGroupInfo(groupId, dto, securityMember.getId());
         return ApiResponse.success_only(SuccessStatus.SEND_GROUP_UPDATE_SUCCESS);
     }
