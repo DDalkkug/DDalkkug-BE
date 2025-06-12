@@ -6,6 +6,8 @@ import com.drumtong.backend.api.calendar.dto.CalendarSummaryDto;
 import com.drumtong.backend.api.calendar.dto.MonthlyExpenseDto;
 import com.drumtong.backend.api.calendar.service.CalendarEntryService;
 import com.drumtong.backend.api.calendar.service.ImageUploadService;
+import com.drumtong.backend.api.groupInfo.controller.GroupInfoController;
+import com.drumtong.backend.api.groupInfo.entity.GroupInfo;
 import com.drumtong.backend.api.member.entity.Member;
 import com.drumtong.backend.api.member.repository.MemberRepository;
 import com.drumtong.backend.common.exception.NotFoundException;
@@ -34,6 +36,7 @@ public class CalendarEntryController {
     private final CalendarEntryService calendarEntryService;
     private final ImageUploadService imageUploadService;
     private final MemberRepository memberRepository;
+    private final GroupInfoController groupInfoRepository;
 
     @PostMapping(consumes = "multipart/form-data")
     @Operation(summary = "게시글 등록")
@@ -141,4 +144,83 @@ public class CalendarEntryController {
         return ApiResponse.success(SuccessStatus.SEND_HEALTH_SUCCESS, result);
     }
 
+    /**
+     * 그룹별 캘린더 조회
+     */
+    @GetMapping("/group/{groupId}")
+    @Operation(summary = "그룹별 캘린더 조회")
+    public ResponseEntity<ApiResponse<List<CalendarEntryResponseDto>>> getGroupEntries(
+            @PathVariable Long groupId) {
+        List<CalendarEntryResponseDto> entries = calendarEntryService.getEntriesByGroupId(groupId);
+        return ApiResponse.success(SuccessStatus.SEND_HEALTH_SUCCESS, entries);
+    }
+
+    /**
+     * 로그인한 사용자의 그룹 공유 항목 조회
+     */
+    @GetMapping("/my-group-entries")
+    @Operation(summary = "내 그룹 공유 항목 조회")
+    public ResponseEntity<ApiResponse<List<CalendarEntryResponseDto>>> getMyGroupSharedEntries(
+            @AuthenticationPrincipal SecurityMember securityMember) {
+        List<CalendarEntryResponseDto> entries =
+                calendarEntryService.getGroupSharedEntriesByUserId(securityMember.getId());
+        return ApiResponse.success(SuccessStatus.SEND_HEALTH_SUCCESS, entries);
+    }
+    // 그룹별 주간 지출 조회 API 수정
+    @GetMapping("/group/{groupId}/week-expense")
+    @Operation(summary = "그룹별 특정 주의 사용한 총 금액 조회")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getGroupWeeklyExpense(
+            @PathVariable Long groupId,
+            @RequestParam int year,
+            @RequestParam int month,
+            @RequestParam int weekOfMonth) {
+
+        // 서비스에서 모든 정보를 처리하고 결과를 받아옴
+        Map<String, Object> result = calendarEntryService.getGroupWeeklyTotalPrice(
+                groupId, year, month, weekOfMonth);
+
+        return ApiResponse.success(SuccessStatus.SEND_HEALTH_SUCCESS, result);
+    }
+
+    // 그룹별 월간 캘린더 조회 API
+    @GetMapping("/group/{groupId}/month")
+    @Operation(summary = "그룹별 한 달 동안의 캘린더 조회")
+    public ResponseEntity<ApiResponse<List<CalendarSummaryDto>>> getGroupMonthlyCalendar(
+            @PathVariable Long groupId,
+            @RequestParam int year,
+            @RequestParam int month) {
+
+        return ApiResponse.success(
+                SuccessStatus.SEND_HEALTH_SUCCESS,
+                calendarEntryService.getGroupMonthlyCalendarSummary(groupId, year, month));
+    }
+
+    // 그룹별 최근 5개월 지출 조회 API
+    @GetMapping("/group/{groupId}/month-expense")
+    @Operation(summary = "그룹별 최근 5개월 동안 사용한 총 금액 조회")
+    public ResponseEntity<ApiResponse<List<MonthlyExpenseDto>>> getGroupMonthlyExpense(
+            @PathVariable Long groupId,
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) Integer month) {
+
+        // 파라미터가 제공되지 않으면 현재 날짜 사용
+        LocalDate now = LocalDate.now();
+        int currentYear = (year != null) ? year : now.getYear();
+        int currentMonth = (month != null) ? month : now.getMonthValue();
+
+        List<MonthlyExpenseDto> expenses = calendarEntryService.getGroupRecentMonthsExpense(
+                groupId, currentYear, currentMonth);
+
+        return ApiResponse.success(SuccessStatus.SEND_HEALTH_SUCCESS, expenses);
+    }
+
+    // 그룹별 현재 주 월~금 지출 조회 API
+    @GetMapping("/group/{groupId}/current-weekdays")
+    @Operation(summary = "그룹별 이번 주 월~금 사용한 금액 조회")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getGroupCurrentWeekdaysExpense(
+            @PathVariable Long groupId) {
+
+        Map<String, Object> result = calendarEntryService.getGroupCurrentWeekdaysExpense(groupId);
+        return ApiResponse.success(SuccessStatus.SEND_HEALTH_SUCCESS, result);
+    }
 }

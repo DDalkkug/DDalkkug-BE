@@ -18,6 +18,7 @@ public class CalendarEntry {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long groupId;
     private Long userId;
     private LocalDate drinkingDate;
 
@@ -29,5 +30,5 @@ public class CalendarEntry {
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
-
+    private Boolean isGroupShared;
 }

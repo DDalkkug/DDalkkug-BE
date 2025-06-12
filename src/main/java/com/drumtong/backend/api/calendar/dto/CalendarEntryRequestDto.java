@@ -12,6 +12,8 @@ public class CalendarEntryRequestDto {
     private Long userId;
     private LocalDate drinkingDate;
     private String memo;
+    private Long groupId;
     private Integer totalPrice;
     private List<DrinkDto> drinks; // Added drinks list
+    private String photoUrl;
 }
