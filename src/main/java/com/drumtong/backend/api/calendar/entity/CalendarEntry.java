@@ -31,4 +31,5 @@ public class CalendarEntry {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     private Boolean isGroupShared;
+    private Long groupEntryId;
 }
