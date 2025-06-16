@@ -76,6 +76,28 @@ public class CalendarEntryController {
         return ApiResponse.success_only(SuccessStatus.SEND_HEALTH_SUCCESS);
     }
 
+    @PostMapping(value = "/{id}/update", consumes = "multipart/form-data")
+    @Operation(summary = "캘린더 항목 수정")
+    public ResponseEntity<ApiResponse<CalendarEntryResponseDto>> updateEntry(
+            @AuthenticationPrincipal SecurityMember securityMember,
+            @PathVariable Long id,
+            @ModelAttribute CalendarEntryRequestDto requestDto,
+            @RequestPart(value = "image", required = false) MultipartFile image) {
+
+        // 인증된 사용자의 ID를 설정
+        requestDto.setUserId(securityMember.getId());
+
+        // 이미지 처리
+        String imageUrl = null;
+        if (image != null && !image.isEmpty()) {
+            imageUrl = imageUploadService.upload(image);
+        }
+
+        // 서비스 호출하여 항목 업데이트
+        CalendarEntryResponseDto response = calendarEntryService.updateEntry(id, requestDto, imageUrl);
+        return ApiResponse.success(SuccessStatus.SEND_HEALTH_SUCCESS, response);
+    }
+
     @GetMapping("/week-expense")
     @Operation(summary = "특정 주의 사용한 총 금액 조회")
     public ResponseEntity<ApiResponse<Map<String, Object>>> getWeeklyExpense(
