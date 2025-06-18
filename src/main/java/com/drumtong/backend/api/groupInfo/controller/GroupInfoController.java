@@ -134,4 +134,18 @@ public class GroupInfoController {
     public ResponseEntity<ApiResponse<List<GroupInfoDto>>> findAll() {
         return ApiResponse.success(SuccessStatus.GET_GROUP_INFO_LIST_SUCCESS, queryService.findAll());
     }
+    @GetMapping("/my-leading-groups")
+    @Operation(summary = "내가 리더인 그룹 목록 조회")
+    public ResponseEntity<ApiResponse<List<GroupInfoDto>>> getMyLeadingGroups(
+            @AuthenticationPrincipal SecurityMember securityMember) {
+        return ApiResponse.success(SuccessStatus.GET_GROUP_INFO_SUCCESS,
+                queryService.findAllByLeaderId(securityMember.getId()));
+    }
+    @GetMapping("/not-joined-groups")
+    @Operation(summary = "내가 아직 가입하지 않은 그룹 목록 조회")
+    public ResponseEntity<ApiResponse<List<GroupInfoDto>>> getNotJoinedGroups(
+            @AuthenticationPrincipal SecurityMember securityMember) {
+        return ApiResponse.success(SuccessStatus.GET_GROUP_INFO_SUCCESS,
+                queryService.findGroupsNotJoinedByMember(securityMember.getId()));
+    }
 }
