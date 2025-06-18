@@ -70,4 +70,5 @@ public class GroupMemberCommandService {
 
         groupMemberRepository.delete(groupMember);
     }
+
 }
