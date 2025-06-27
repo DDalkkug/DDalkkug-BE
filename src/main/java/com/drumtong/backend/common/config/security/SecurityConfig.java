@@ -46,7 +46,8 @@ public class SecurityConfig {
                     config.setAllowedOrigins(Arrays.asList(
                             "https://api.ddalkkug.kro.kr",
                             "http://localhost:5436",
-                            "http://localhost:5173"
+                            "http://localhost:5173",
+                            "http://ddalkkug.s3-website.ap-northeast-2.amazonaws.com"
                     ));
                     config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH","DELETE", "OPTIONS"));
                     config.setAllowCredentials(true);
