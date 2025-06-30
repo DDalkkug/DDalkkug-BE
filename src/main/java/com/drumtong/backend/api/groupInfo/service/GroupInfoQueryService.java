@@ -68,6 +68,11 @@ public class GroupInfoQueryService {
         dto.setName(group.getName());
         dto.setDescription(group.getDescription());
         dto.setTotalPaid(group.getTotalPaid());
+        
+        // 그룹원 수 계산하여 설정
+        int memberCount = groupMemberRepository.findByGroupId(group.getId()).size();
+        dto.setMemberCount(memberCount);
+        
         return dto;
     }
     /**

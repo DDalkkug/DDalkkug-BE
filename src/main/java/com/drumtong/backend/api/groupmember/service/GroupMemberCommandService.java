@@ -71,4 +71,20 @@ public class GroupMemberCommandService {
         groupMemberRepository.delete(groupMember);
     }
 
+    /**
+     * 그룹 탈퇴
+     */
+    public void quitMemberFromGroup(Long groupId, Long memberId) {
+        // 그룹 정보 조회
+        GroupInfo groupInfo = groupInfoRepository.findById(groupId)
+                .orElseThrow(() -> new NotFoundException(ErrorStatus.GROUP_NOT_FOUND_EXCEPTION.getMessage()));
+
+        // 그룹에 멤버가 있는지 확인
+        GroupMember groupMember = groupMemberRepository.findByGroupIdAndMemberId(groupId, memberId)
+                .orElseThrow(() -> new NotFoundException("멤버가 그룹에 존재하지 않습니다."));
+
+        groupMemberRepository.delete(groupMember);
+    }
+
+
 }
