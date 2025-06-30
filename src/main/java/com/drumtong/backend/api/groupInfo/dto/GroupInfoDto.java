@@ -9,4 +9,5 @@ public class GroupInfoDto {
     private String name;
     private String description;
     private Integer totalPaid;
+    private Integer memberCount; // 그룹원 수 필드 추가
 }

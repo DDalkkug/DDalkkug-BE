@@ -27,12 +27,13 @@ public class GroupMemberController {
     /**
      * 그룹에 멤버 추가
      */
-    @PostMapping("/{groupId}/members/{memberId}")
+    @PostMapping("/{groupId}/members")
     @Operation(summary = "그룹에 멤버 추가")
     public ResponseEntity<ApiResponse<Long>> addMemberToGroup(
             @PathVariable Long groupId,
-            @PathVariable Long memberId) {
-        Long id = commandService.addMemberToGroup(groupId, memberId);
+            @AuthenticationPrincipal SecurityMember securityMember
+    ) {
+        Long id = commandService.addMemberToGroup(groupId, securityMember.getId());
         return ApiResponse.success(SuccessStatus.SEND_HEALTH_SUCCESS, id);
     }
 
@@ -51,6 +52,20 @@ public class GroupMemberController {
     }
 
     /**
+     * 그룹 탈퇴
+     */
+    @DeleteMapping("quit/{groupId}/")
+    @Operation(summary = "그룹 탈퇴")
+    public ResponseEntity<ApiResponse<Void>> quitMemberFromGroup(
+            @AuthenticationPrincipal SecurityMember securityMember,
+            @PathVariable Long groupId) {
+        // 현재 로그인한 사용자 ID를 서비스로 전달하여 권한 확인
+        commandService.quitMemberFromGroup(groupId, securityMember.getId());
+        return ApiResponse.success_only(SuccessStatus.SEND_HEALTH_SUCCESS);
+    }
+
+
+    /**
      * 그룹 멤버 조회
      */
     @GetMapping("/{groupId}/members")
@@ -58,16 +73,6 @@ public class GroupMemberController {
     public ResponseEntity<ApiResponse<List<MemberSimpleDto>>> getGroupMembers(
             @PathVariable Long groupId) {
         return ApiResponse.success(SuccessStatus.SEND_HEALTH_SUCCESS, queryService.getGroupMembers(groupId));
-    }
-
-    /**
-     * 멤버의 그룹 조회
-     */
-    @GetMapping("/members/{memberId}/groups")
-    @Operation(summary = "멤버가 속한 그룹 목록 조회")
-    public ResponseEntity<ApiResponse<List<GroupInfoDto>>> getMemberGroups(
-            @PathVariable Long memberId) {
-        return ApiResponse.success(SuccessStatus.SEND_HEALTH_SUCCESS, queryService.getMemberGroups(memberId));
     }
 
     /**
