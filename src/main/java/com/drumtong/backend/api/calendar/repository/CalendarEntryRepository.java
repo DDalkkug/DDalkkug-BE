@@ -10,7 +10,8 @@ public interface CalendarEntryRepository extends JpaRepository<CalendarEntry, Lo
     // 기존 메소드들...
     List<CalendarEntry> findByUserId(Long userId);
     List<CalendarEntry> findByUserIdAndDrinkingDateBetween(Long userId, LocalDate startDate, LocalDate endDate);
-
+    // 날짜별 조회 메소드 추가
+    List<CalendarEntry> findByUserIdAndDrinkingDate(Long userId, LocalDate drinkingDate);
     // 그룹 관련 메소드 추가
     List<CalendarEntry> findByGroupId(Long groupId);
     List<CalendarEntry> findByUserIdAndIsGroupSharedTrue(Long userId);
