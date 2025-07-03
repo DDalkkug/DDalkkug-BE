@@ -3,6 +3,9 @@ package com.drumtong.backend.api.groupInfo.service;
 import com.drumtong.backend.api.groupInfo.dto.GroupInfoDto;
 import com.drumtong.backend.api.groupInfo.entity.GroupInfo;
 import com.drumtong.backend.api.groupInfo.repository.GroupInfoRepository;
+import com.drumtong.backend.api.groupmember.entity.GroupMember;
+import com.drumtong.backend.api.groupmember.repository.GroupMemberRepository;
+import com.drumtong.backend.api.groupmember.service.GroupMemberCommandService;
 import com.drumtong.backend.common.exception.UnauthorizedException;
 import com.drumtong.backend.common.exception.NotFoundException;
 import com.drumtong.backend.common.response.ErrorStatus;
@@ -10,13 +13,17 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class GroupInfoCommandService {
 
+
+    private final GroupMemberRepository groupMemberRepository;
     private final GroupInfoRepository groupInfoRepository;
-    private final com.drumtong.backend.api.groupmember.service.GroupMemberCommandService groupMemberCommandService;
+    private final GroupMemberCommandService groupMemberCommandService;
 
     public Long createGroupInfo(GroupInfoDto dto) {
         GroupInfo groupInfo = GroupInfo.builder()
@@ -69,18 +76,13 @@ public class GroupInfoCommandService {
             throw new UnauthorizedException("그룹 리더만 그룹을 삭제할 수 있습니다.");
         }
 
-        groupInfoRepository.delete(groupInfo);
-    }
-
-    public void deleteGroupInfoByName(String name, Long currentUserId) {
-        GroupInfo groupInfo = groupInfoRepository.findByName(name)
-                .orElseThrow(() -> new NotFoundException(ErrorStatus.GROUP_NOT_FOUND_EXCEPTION.getMessage()));
-
-        // 리더 권한 확인
-        if (!groupInfo.getLeaderId().equals(currentUserId)) {
-            throw new UnauthorizedException("그룹 리더만 그룹을 삭제할 수 있습니다.");
+        // 1. 그룹에 속한 모든 그룹원 삭제
+        List<GroupMember> groupMembers = groupMemberRepository.findByGroupId(id);
+        for (GroupMember member : groupMembers) {
+            groupMemberRepository.delete(member);
         }
 
+        // 3. 최종적으로 그룹 삭제
         groupInfoRepository.delete(groupInfo);
     }
 }

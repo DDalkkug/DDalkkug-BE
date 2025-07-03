@@ -56,6 +56,20 @@ public class CalendarEntryController {
         CalendarEntryResponseDto response = calendarEntryService.createEntry(requestDto, imageUrl);
         return ApiResponse.success(SuccessStatus.CREATE_RECRUIT_ARTICLE_SUCCESS, response);
     }
+    @GetMapping("/day")
+    @Operation(summary = "특정 날짜의 캘린더 항목 조회")
+    public ResponseEntity<ApiResponse<List<CalendarEntryResponseDto>>> getDailyEntries(
+            @AuthenticationPrincipal SecurityMember securityMember,
+            @RequestParam int year,
+            @RequestParam int month,
+            @RequestParam int day) {
+
+        LocalDate date = LocalDate.of(year, month, day);
+
+        return ApiResponse.success(
+                SuccessStatus.SEND_HEALTH_SUCCESS,
+                calendarEntryService.getDailyEntries(securityMember.getId(), date));
+    }
 
     @GetMapping("/{id}")
     @Operation(summary = "캘린더 id로 조회")

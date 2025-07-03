@@ -1107,6 +1107,17 @@ public class CalendarEntryService {
     }
 
     /**
+     * 특정 날짜의 캘린더 항목 조회
+     */
+    public List<CalendarEntryResponseDto> getDailyEntries(Long userId, LocalDate date) {
+        List<CalendarEntry> entries = calendarEntryRepository.findByUserIdAndDrinkingDate(userId, date);
+
+        return entries.stream()
+                .map(this::getEntryWithDrinks)
+                .collect(Collectors.toList());
+    }
+
+    /**
      * 새 멤버에게 음료 정보 추가
      */
     private void addMemberDrinks(CalendarEntry memberEntry, List<DrinkDto> drinks, int memberCount) {

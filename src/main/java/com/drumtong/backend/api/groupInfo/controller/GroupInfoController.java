@@ -69,18 +69,6 @@ public class GroupInfoController {
     }
 
     /**
-     * 그룹 삭제 - 이름 (리더만 가능)
-     */
-    @DeleteMapping("/name/{name}")
-    @Operation(summary = "그룹 삭제 (리더만 가능)")
-    public ResponseEntity<ApiResponse<Void>> delete(
-            @AuthenticationPrincipal SecurityMember securityMember,
-            @PathVariable String name) {
-        commandService.deleteGroupInfoByName(name, securityMember.getId());
-        return ApiResponse.success_only(SuccessStatus.SEND_GROUP_DELETE_SUCCESS);
-    }
-
-    /**
      * 그룹 삭제 - ID (리더만 가능)
      */
     @DeleteMapping("/id/{groupId}")
@@ -92,16 +80,6 @@ public class GroupInfoController {
         return ApiResponse.success_only(SuccessStatus.SEND_GROUP_DELETE_SUCCESS);
     }
 
-    /**
-     * 그룹 단건 조회 - 이름
-     * @param name 조회하고자 하는 그룹 이름
-     * @return 조회된 그룹 정보
-     */
-    @GetMapping("/name/{name}")
-    @Operation(summary = "그룹 단건 조회 - 이름")
-    public ResponseEntity<ApiResponse<GroupInfoDto>> findByName(@PathVariable String name) {
-        return ApiResponse.success(SuccessStatus.GET_GROUP_INFO_SUCCESS, queryService.findByName(name));
-    }
 
     /**
      * 그룹 단건 조회 -그룹 id
