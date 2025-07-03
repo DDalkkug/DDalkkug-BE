@@ -48,7 +48,7 @@ public class GroupMemberQueryService {
     }
 
     /**
-     * 멤버가 속한 모든 그룹 조회
+     * 멤버가 속한 모든 그룹 조회 (리더인 그룹 제외)
      */
     public List<GroupInfoDto> getMemberGroups(Long memberId) {
         // 멤버 존재 확인
@@ -62,6 +62,8 @@ public class GroupMemberQueryService {
                 .map(gm -> groupInfoRepository.findById(gm.getGroupId()))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
+                // 리더인 그룹 필터링 - 그룹의 리더 ID가 현재 사용자 ID와 다른 경우만 포함
+                .filter(group -> !group.getLeaderId().equals(memberId))
                 .map(this::toGroupInfoDto)
                 .collect(Collectors.toList());
     }
